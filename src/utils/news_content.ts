@@ -146,7 +146,7 @@ export type NewsContent = {
   ],
   "accounts": [
     {
-      "name": "Content",
+      "name": "content",
       "type": {
         "kind": "struct",
         "fields": [
@@ -475,7 +475,7 @@ export const IDL: NewsContent = {
   ],
   "accounts": [
     {
-      "name": "Content",
+      "name": "content",
       "type": {
         "kind": "struct",
         "fields": [
