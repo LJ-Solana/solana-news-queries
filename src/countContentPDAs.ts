@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, Connection } from '@solana/web3.js';
 import { Program, AnchorProvider } from '@project-serum/anchor';
 import { IDL } from './utils/news_content';
 import { getConnection } from './utils/connection';
@@ -9,29 +9,40 @@ export async function countContentPDAs() {
   const connection = getConnection();
   console.log("Connection obtained");
   
-  // Set up the provider
-  console.log("Setting up AnchorProvider");
-  const provider = new AnchorProvider(connection, {} as any, {});
-  console.log("AnchorProvider set up");
-  
   // Create a Program instance
   console.log("Creating Program instance");
   const programId = new PublicKey("DcyZJhRUd96TAEYV7a7rWofy6kz9QAqsji4fftcox89y"); 
-  const program = new Program(IDL, programId, provider);
   console.log("Program instance created");
 
   try {
-    // Fetch all accounts of type 'content'
-    console.log("Fetching all content accounts");
-    const contentAccounts = await program.account.content.all();
-    console.log("Content accounts fetched");
+    // Fetch all accounts for the program
+    console.log("Fetching all program accounts");
+    const accounts = await connection.getProgramAccounts(programId);
+    console.log(`Total accounts found: ${accounts.length}`);
 
-    const totalContentPDAs = contentAccounts.length;
-    console.log(`Total number of content PDAs: ${totalContentPDAs}`);
+    let validAccounts = 0;
+    let invalidAccounts = 0;
 
-    return totalContentPDAs;
+    for (const { pubkey, account } of accounts) {
+      console.log(`Account ${pubkey.toBase58()}:`);
+
+      // You can add more specific checks here if needed
+      if (account.data.length > 0 && account.owner.equals(programId)) {
+        validAccounts++;
+      } else {
+        invalidAccounts++;
+      }
+    }
+
+    console.log(`Total program accounts: ${accounts.length}`)
+
+    return {
+      total: accounts.length,
+      valid: validAccounts,
+      invalid: invalidAccounts
+    };
   } catch (error) {
-    console.error("Error counting content PDAs:", error);
+    console.error("Error fetching program accounts:", error);
     throw error;
   }
 }

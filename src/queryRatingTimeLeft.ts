@@ -56,7 +56,7 @@ export async function getRatingTimeLeftAndCount(contentPDA: string) {
       const days = Math.floor(timeLeft / (24 * 60 * 60));
       const hours = Math.floor((timeLeft % (24 * 60 * 60)) / (60 * 60));
       const minutes = Math.floor((timeLeft % (60 * 60)) / 60);
-      timeLeftString = `Time left to rate: ${days} days, ${hours} hours, ${minutes} minutes`;
+      timeLeftString = `Time left to rate ${contentPDA}: ${days} days, ${hours} hours, ${minutes} minutes`;
     }
 
     return {
